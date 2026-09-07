@@ -1,35 +1,16 @@
-#!name = 菜鸟裹裹 v2
-#!author = ?
-#!update = 2026-9-7
+#!name = 菜鸟
+#!author = 怎么肥事
+#!update = 2026-09-07
 
-# ============================================================
-#  目标：
-#    1. 移除首页头部运营入口，修复功能区残留白底
-#    2. 底部导航仅保留 首页 / 我的
-#  下发接口：mtop.cainiao.app.e2e.engine.page.fetch
-#  命中 pageId：1100（首页）、1300（底部导航）
-# ============================================================
+host, h-adashx.ut.cainiao.com, reject
+host, admonitor-feedback.cn-hangzhou.log.aliyuncs.com, reject
+host, cainiao-app-logs.cn-zhangjiakou.log.aliyuncs.com, reject
+host, gm.mmstat.com, reject
 
-# ===== 1. 第三方广告 SDK 域名（直封） =====
-host, sdk.1rtb.net, reject
-host, adx-cfg-u1.ubixioe.com, reject
-host, ssp.iytcdn.com, reject
-host, cf-gl.qiezibenpao.com, reject
-host, ipip-gl1.qiezibenpao.com, reject
+^https:\/\/e2e-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch\/1\.0 url jsonjq-response-body 'del(.data.data.data.operationList)'
+^https:\/\/cn-acs\.m\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch\/1\.0 url jsonjq-response-body 'del(.data.data.data.operationList)'
 
-# ===== 2. 菜鸟自研广告/推广接口 =====
-^https:\/\/netflow-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads\..* url reject-dict
-^https:\/\/cn-acs\.m\.cainiao\.com\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads\..* url reject-dict
-^https:\/\/nbcps-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.nbcps\.presentation\.fetch\.cn.* url reject-dict
-^https:\/\/community-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.guoguouser\.live\.activity\.trigger\.cn.* url reject-dict
+^https:\/\/netflow-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads\.(show|mshow|index)\.cn\/1\.0 url reject-dict
+^https:\/\/netflow-reply-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.guoguo\.ads\.expose\.mreply\.cn\/1\.0 url reject-dict
 
-# ===== 3. 移除首页头部运营入口 + 底部导航中间 3 个按钮 =====
-# 抓包确认：
-#   pageId=1100: operationList 包含 kingkong（取包裹/寄包裹/物换物/出库码）与 icons 两组。
-#   pageId=1300: 2240=首页、2242=发现、2247=寄件券、2248=消息、2249=我的。
-# 参考 Didichuxing.snippet：使用 jsonjq-response-body 直接改写响应，不依赖远程脚本。
-^https:\/\/cn-acs\.m\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch url jsonjq-response-body 'del(.data.data.data.operationList, .data.data["2242"], .data.data["2247"], .data.data["2248"])'
-^https:\/\/e2e-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch url jsonjq-response-body 'del(.data.data.data.operationList, .data.data["2242"], .data.data["2247"], .data.data["2248"])'
-
-# ===== 4. 作用域：仅 MITM 这些域名 =====
-hostname = cn-acs.m.cainiao.com, e2e-mtop.cainiao.com, netflow-mtop.cainiao.com, nbcps-mtop.cainiao.com, community-mtop.cainiao.com, sdk.1rtb.net, adx-cfg-u1.ubixioe.com, ssp.iytcdn.com, cf-gl.qiezibenpao.com, ipip-gl1.qiezibenpao.com
+hostname = e2e-mtop.cainiao.com, cn-acs.m.cainiao.com, netflow-mtop.cainiao.com, netflow-reply-mtop.cainiao.com, h-adashx.ut.cainiao.com, admonitor-feedback.cn-hangzhou.log.aliyuncs.com, cainiao-app-logs.cn-zhangjiakou.log.aliyuncs.com, gm.mmstat.com
