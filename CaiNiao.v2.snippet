@@ -24,9 +24,9 @@ host, ipip-gl1.qiezibenpao.com, reject
 ^https:\/\/community-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.guoguouser\.live\.activity\.trigger\.cn.* url reject-dict
 
 # ===== 3. 移除首页头部运营入口 =====
-# 抓包确认：operationList 包含 kingkong 与 icons 两组，会形成截图中的白底功能区。
-^https:\/\/cn-acs\.m\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch\/1\.0.*pageId%22%3A1100 url jsonjq-response-body 'del(.data.data.data.operationList)'
-^https:\/\/e2e-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch\/1\.0.*pageId%22%3A1100 url jsonjq-response-body 'del(.data.data.data.operationList)'
+# 抓包确认：operationList 包含 kingkong（取包裹/寄包裹/物换物/出库码）与 icons 两组，会形成截图中的白底功能区。
+^https:\/\/cn-acs\.m\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch\/1\.0.* url jsonjq-response-body 'del(.data.data.data.operationList)'
+^https:\/\/e2e-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch\/1\.0.* url jsonjq-response-body 'del(.data.data.data.operationList)'
 
 # ===== 4. 移除底部导航中间 3 个按钮 =====
 # 抓包确认：2240=首页、2242=发现、2247=寄件券、2248=消息、2249=我的。
