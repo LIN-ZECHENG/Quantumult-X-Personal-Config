@@ -27,8 +27,9 @@ host, ipip-gl1.qiezibenpao.com, reject
 # 抓包确认：
 #   pageId=1100: operationList 包含 kingkong（取包裹/寄包裹/物换物/出库码）与 icons 两组。
 #   pageId=1300: 2240=首页、2242=发现、2247=寄件券、2248=消息、2249=我的。
-# 统一匹配接口路径，避免卸载重装后因参数顺序、pageId 编码或规则命中顺序导致漏处理。
-^https:\/\/(cn-acs\.m|e2e-mtop)\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch\/1\.0 url script-response-body https://raw.githubusercontent.com/LIN-ZECHENG/Quantumult-X-Personal-Config/main/Scripts/CaiNiao.js
+# 参考 Didichuxing.snippet：使用 jsonjq-response-body 直接改写响应，不依赖远程脚本。
+^https:\/\/cn-acs\.m\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch url jsonjq-response-body 'del(.data.data.data.operationList, .data.data["2242"], .data.data["2247"], .data.data["2248"])'
+^https:\/\/e2e-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch url jsonjq-response-body 'del(.data.data.data.operationList, .data.data["2242"], .data.data["2247"], .data.data["2248"])'
 
 # ===== 4. 作用域：仅 MITM 这些域名 =====
 hostname = cn-acs.m.cainiao.com, e2e-mtop.cainiao.com, netflow-mtop.cainiao.com, nbcps-mtop.cainiao.com, community-mtop.cainiao.com, sdk.1rtb.net, adx-cfg-u1.ubixioe.com, ssp.iytcdn.com, cf-gl.qiezibenpao.com, ipip-gl1.qiezibenpao.com
