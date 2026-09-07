@@ -1,0 +1,36 @@
+#!name = 菜鸟裹裹 v2
+#!author = ?
+#!update = 2026-9-7
+
+# ============================================================
+#  目标：屏蔽首页/功能区 e2e 下发的「功能图标组件组」全部 10 项
+#    裹酱积分 / 天天领红包 / 绿色家园 / 问邻居 / 幸运包裹
+#    领寄件券 / 驿站上门 / 拉货搬家 / 菜鸟回收 / 更多
+#  下发接口：mtop.cainiao.app.e2e.engine.page.fetch
+#  命中 pageId：1100（首页）、1300（功能区）
+# ============================================================
+
+# ===== 1. 屏蔽 e2e 功能组件组 =====
+# 说明：整段 reject 会让该接口下发的所有 e2e 动态卡片一起消失。
+#       若后续确认本接口还承载其它「必要」卡片导致误伤，
+#       请提供该接口的「成功响应」抓包，改用下方注释的 jsonjq 精确过滤。
+# 接口可能分布在这两个网关上，故两条都拦。
+^https:\/\/cn-acs\.m\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch.* url reject-dict
+^https:\/\/e2e-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch.* url reject-dict
+
+# ---- (备选) 更精细过滤：仅剔除目标卡片，保留同接口其它卡片 ----
+# 需把成功响应中对应组件列表节点的数组元素剔除，字段示例：
+# itemName/name = 裹酱积分|天天领红包|绿色家园|问邻居|幸运包裹|领寄件券|驿站上门|拉货搬家|菜鸟回收|更多
+# ^https:\/\/cn-acs\.m\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch.* url jsonjq {"...": ...}
+
+# ===== 2. 菜鸟广告/推广接口（抓包确认，可选启用） =====
+# 自研广告 nbnetflow（ads.show / mshow），本次抓包同时出现在两个网关
+^https:\/\/netflow-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads\.show\.cn.* url reject-dict
+^https:\/\/netflow-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads\.mshow\.cn.* url reject-dict
+^https:\/\/cn-acs\.m\.cainiao\.com\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads\.show\.cn.* url reject-dict
+^https:\/\/cn-acs\.m\.cainiao\.com\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads\.mshow\.cn.* url reject-dict
+
+# ===== 3. MITM 作用域（仅命中以上需处理的域名） =====
+# cn-acs.m.cainiao.com：当前版本主网关（e2e 与 nbnetflow 都在这）
+# netflow-mtop.cainiao.com / e2e-mtop.cainiao.com：旧网关，双写兼容
+hostname = cn-acs.m.cainiao.com, netflow-mtop.cainiao.com, e2e-mtop.cainiao.com
