@@ -3,10 +3,11 @@
 #!update = 2026-9-7
 
 # ============================================================
-#  目标：移除首页红框功能组件
-#    裹酱积分 / 包裹赚赚 / 欢乐赢红包 / 菜鸟回收 / 更多
+#  目标：
+#    1. 移除首页头部运营入口，修复功能区残留白底
+#    2. 底部导航仅保留 首页 / 我的
 #  下发接口：mtop.cainiao.app.e2e.engine.page.fetch
-#  命中 pageId：1100（首页）
+#  命中 pageId：1100（首页）、1300（底部导航）
 # ============================================================
 
 # ===== 1. 第三方广告 SDK 域名（直封） =====
@@ -22,11 +23,15 @@ host, ipip-gl1.qiezibenpao.com, reject
 ^https:\/\/nbcps-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.nbcps\.presentation\.fetch\.cn.* url reject-dict
 ^https:\/\/community-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.guoguouser\.live\.activity\.trigger\.cn.* url reject-dict
 
-# ===== 3. 精确移除首页第二行 icons 组件 =====
-# 抓包确认：operationList[0].type=kingkong（取包裹/寄包裹/物换物/出库码），保留。
-#          operationList[1].type=icons，items.key 为 gjjf/packageQa/sawPuzzle/cnhs/appCentreMore，移除。
-^https:\/\/cn-acs\.m\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch\/1\.0.*pageId%22%3A1100 url jsonjq-response-body '.data.data.data.operationList |= map(if .type == "icons" then (.bizData.items |= map(select((.key // "") as $k | (["gjjf","packageQa","sawPuzzle","cnhs","appCentreMore"] | index($k) | not)))) else . end) | .data.data.data.operationList |= map(select((.type == "icons" and ((.bizData.items // []) | length == 0)) | not))'
-^https:\/\/e2e-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch\/1\.0.*pageId%22%3A1100 url jsonjq-response-body '.data.data.data.operationList |= map(if .type == "icons" then (.bizData.items |= map(select((.key // "") as $k | (["gjjf","packageQa","sawPuzzle","cnhs","appCentreMore"] | index($k) | not)))) else . end) | .data.data.data.operationList |= map(select((.type == "icons" and ((.bizData.items // []) | length == 0)) | not))'
+# ===== 3. 移除首页头部运营入口 =====
+# 抓包确认：operationList 包含 kingkong 与 icons 两组，会形成截图中的白底功能区。
+^https:\/\/cn-acs\.m\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch\/1\.0.*pageId%22%3A1100 url jsonjq-response-body 'del(.data.data.data.operationList)'
+^https:\/\/e2e-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch\/1\.0.*pageId%22%3A1100 url jsonjq-response-body 'del(.data.data.data.operationList)'
 
-# ===== 4. 作用域：仅 MITM 这些域名 =====
+# ===== 4. 移除底部导航中间 3 个按钮 =====
+# 抓包确认：2240=首页、2242=发现、2247=寄件券、2248=消息、2249=我的。
+^https:\/\/cn-acs\.m\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch\/1\.0.*pageId%22%3A1300 url jsonjq-response-body '.data.data |= with_entries(select(.key == "2240" or .key == "2249"))'
+^https:\/\/e2e-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch\/1\.0.*pageId%22%3A1300 url jsonjq-response-body '.data.data |= with_entries(select(.key == "2240" or .key == "2249"))'
+
+# ===== 5. 作用域：仅 MITM 这些域名 =====
 hostname = cn-acs.m.cainiao.com, e2e-mtop.cainiao.com, netflow-mtop.cainiao.com, nbcps-mtop.cainiao.com, community-mtop.cainiao.com, sdk.1rtb.net, adx-cfg-u1.ubixioe.com, ssp.iytcdn.com, cf-gl.qiezibenpao.com, ipip-gl1.qiezibenpao.com
