@@ -2,8 +2,6 @@
 #!author = ?
 #!update = 2026-9-7
 
-[rewrite_local]
-
 # ============================================================
 #  目标：
 #    1. 移除首页头部运营入口，修复功能区残留白底
@@ -33,5 +31,4 @@ host, ipip-gl1.qiezibenpao.com, reject
 ^https:\/\/(cn-acs\.m|e2e-mtop)\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch\/1\.0 url script-response-body https://raw.githubusercontent.com/LIN-ZECHENG/Quantumult-X-Personal-Config/main/Scripts/CaiNiao.js
 
 # ===== 4. 作用域：仅 MITM 这些域名 =====
-[mitm]
 hostname = cn-acs.m.cainiao.com, e2e-mtop.cainiao.com, netflow-mtop.cainiao.com, nbcps-mtop.cainiao.com, community-mtop.cainiao.com, sdk.1rtb.net, adx-cfg-u1.ubixioe.com, ssp.iytcdn.com, cf-gl.qiezibenpao.com, ipip-gl1.qiezibenpao.com
