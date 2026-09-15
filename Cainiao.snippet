@@ -1,7 +1,7 @@
-#!name = 菜鸟首页精简（仅保留取件）v2
+#!name = 菜鸟首页精简（仅保留包裹区域）v3
 #!author = Codex
 #!update = 2026-09-16
-#!desc = 基于菜鸟 8.11.910 iOS 抓包制作；递归筛选新版首页 operationList，只保留取件入口和包裹数据。
+#!desc = 移除包裹列表上方的搜索栏和快捷入口，保留下方“查收/寄退”包裹区域。
 
 host, h-adashx.ut.cainiao.com, reject
 host, admonitor-feedback.cn-hangzhou.log.aliyuncs.com, reject
@@ -14,8 +14,8 @@ host, gm.mmstat.com, reject
 # 广告曝光、点击和关闭回传。
 ^https:\/\/netflow-reply-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.guoguo\.ads\.(?:expose\.mreply|expose\.reply|click\.reply|close\.reply)\.cn\/ url reject-dict
 
-# 新版首页配置：删除搜索和营销弹层，并在快捷服务中只保留取件。
+# 新版首页配置：删除搜索、快捷服务和营销弹层。
 # 2242=发现、2247=寄件/物换物、2248=消息；保留 2240=首页、2249=我的。
-^https:\/\/(?:cn-acs\.m\.cainiao\.com|e2e-mtop\.cainiao\.com)\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch\/1\.0 url script-response-body https://raw.githubusercontent.com/LIN-ZECHENG/Quantumult-X-Personal-Config/main/Cainiao.js
+^https:\/\/(?:cn-acs\.m\.cainiao\.com|e2e-mtop\.cainiao\.com)\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch\/1\.0 url script-response-body https://raw.githubusercontent.com/LIN-ZECHENG/Quantumult-X-Personal-Config/main/Cainiao.js?v=3
 
 hostname = cn-acs.m.cainiao.com, e2e-mtop.cainiao.com, netflow-mtop.cainiao.com, netflow-reply-mtop.cainiao.com, h-adashx.ut.cainiao.com, admonitor-feedback.cn-hangzhou.log.aliyuncs.com, cainiao-app-logs.cn-zhangjiakou.log.aliyuncs.com, gm.mmstat.com
