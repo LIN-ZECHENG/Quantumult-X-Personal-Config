@@ -1,4 +1,32 @@
-/* 菜鸟首页精简：移除包裹列表上方的搜索与快捷入口。 */
+/* 菜鸟首页精简：只保留取件入口及取件数据。 */
+
+const PICKUP_MARKERS = ["pick_up", "pickup_page_native"];
+
+function containsPickup(value) {
+  try {
+    const text = JSON.stringify(value).toLowerCase();
+    return PICKUP_MARKERS.some((marker) => text.includes(marker));
+  } catch (_) {
+    return false;
+  }
+}
+
+function keepPickupOnly(value) {
+  if (Array.isArray(value)) {
+    const processed = value.map(keepPickupOnly);
+    return processed.some(containsPickup)
+      ? processed.filter(containsPickup)
+      : processed;
+  }
+
+  if (value && typeof value === "object") {
+    for (const key of Object.keys(value)) {
+      value[key] = keepPickupOnly(value[key]);
+    }
+  }
+
+  return value;
+}
 
 try {
   const body = JSON.parse($response.body);
@@ -7,7 +35,9 @@ try {
 
   if (homeData) {
     delete homeData.mainSearch;
-    delete homeData.operationList;
+    if (homeData.operationList) {
+      homeData.operationList = keepPickupOnly(homeData.operationList);
+    }
   }
 
   if (pageData) {
