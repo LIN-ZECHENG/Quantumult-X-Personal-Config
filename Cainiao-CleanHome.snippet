@@ -4,12 +4,12 @@
 #!update = 2026-09-16
 
 # 首页搜索组件（页面布局接口会按组件分批返回；仅在存在 mainSearch 时删除，不影响其他页面）
-^https:\/\/(?:cn-acs|e2e)-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch\/1\.0 url jsonjq-response-body 'del(.data.data.data.mainSearch)'
+^https:\/\/(?:cn-acs\.m\.cainiao\.com|e2e-mtop\.cainiao\.com)\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch\/1\.0 url jsonjq-response-body 'del(.data.data.data.mainSearch)'
 
 # 首页快捷服务、营销入口和“更多”由 NetFlow 广告位接口下发；拦截后包裹列表接口仍正常请求
-^https:\/\/(?:cn-acs|netflow)-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads\.(?:show|mshow)\.cn\/1\.0 url reject-dict
+^https:\/\/(?:cn-acs\.m\.cainiao\.com|netflow-mtop\.cainiao\.com)\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads\.(?:show|mshow)\.cn\/1\.0 url reject-dict
 
 # 广告曝光回传（非展示必需，避免已隐藏入口继续产生回传请求）
-^https:\/\/(?:cn-acs|netflow-reply)-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.guoguo\.ads\.expose\.mreply\.cn\/1\.0 url reject-dict
+^https:\/\/(?:cn-acs\.m\.cainiao\.com|netflow-reply-mtop\.cainiao\.com)\/gw\/mtop\.cainiao\.guoguo\.ads\.expose\.mreply\.cn\/1\.0 url reject-dict
 
 hostname = cn-acs.m.cainiao.com, e2e-mtop.cainiao.com, netflow-mtop.cainiao.com, netflow-reply-mtop.cainiao.com
