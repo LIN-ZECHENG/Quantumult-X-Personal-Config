@@ -1,0 +1,25 @@
+#!name = 菜鸟首页精简（仅保留取件）
+#!author = Codex
+#!update = 2026-09-16
+#!desc = 基于菜鸟 8.11.910 iOS 抓包制作；保留包裹、驿站及取件能力，移除首页搜索、快捷服务、推荐和营销内容。建议启用后卸载并重装菜鸟。
+
+host, h-adashx.ut.cainiao.com, reject
+host, admonitor-feedback.cn-hangzhou.log.aliyuncs.com, reject
+host, cainiao-app-logs.cn-zhangjiakou.log.aliyuncs.com, reject
+host, gm.mmstat.com, reject
+
+# 首页通用广告：服务端通常返回广告素材，空字典可让客户端自然隐藏对应卡片。
+^https:\/\/(?:cn-acs\.m\.cainiao\.com|netflow-mtop\.cainiao\.com)\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads\.(?:show|mshow|index)\.cn\/ url reject-dict
+
+# 广告曝光、点击和关闭回传。
+^https:\/\/netflow-reply-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.guoguo\.ads\.(?:expose\.mreply|expose\.reply|click\.reply|close\.reply)\.cn\/ url reject-dict
+
+# 新版首页配置：删除搜索、快捷服务和营销弹层。
+# 2242=发现、2247=寄件/物换物、2248=消息；保留 2240=首页、2249=我的。
+^https:\/\/(?:cn-acs\.m\.cainiao\.com|e2e-mtop\.cainiao\.com)\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch\/1\.0 url jsonjq-response-body 'del(.data.data.data.mainSearch, .data.data.data.operationList, .data.data.modalList, .data.data["2242"], .data.data["2247"], .data.data["2248"])'
+
+# 安装/首次启动时下发的 Orange 首页缓存配置。
+# 仅处理 name=home 的配置，清空旧版功能宫格、推荐位和活动入口；取件路由及取件配置来自其他配置项，不受影响。
+^https:\/\/orange-dc\.alibaba\.com\/downloadResource\? url jsonjq-response-body 'if .name == "home" then .content.mainfeature = "[]" | .content.mainfeature340 = "{}" | .content.recommend = "[]" | .content.recommend340 = "[]" | .content.recommend360 = "[]" | .content.recommendLogin340 = "[]" | .content.actionentranceinfo = "{\"actionentranceinfo\":[]}" | .content.mailtrackactionentranceinfo = "{\"mailtrackactionentranceinfo\":[]}" | .content.secondFloorIsOpen = "false" else . end'
+
+hostname = cn-acs.m.cainiao.com, e2e-mtop.cainiao.com, netflow-mtop.cainiao.com, netflow-reply-mtop.cainiao.com, orange-dc.alibaba.com, h-adashx.ut.cainiao.com, admonitor-feedback.cn-hangzhou.log.aliyuncs.com, cainiao-app-logs.cn-zhangjiakou.log.aliyuncs.com, gm.mmstat.com
