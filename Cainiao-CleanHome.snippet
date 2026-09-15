@@ -3,14 +3,10 @@
 #!author = Codex
 #!update = 2026-09-16
 
-# 首页页面布局：mainSearch 为搜索栏；operationList 包含“取包裹/寄包裹/清旧物/出库码”及下方快捷入口。
-# 规则只会删除存在的字段，其他页面的布局响应不受影响。
-^https:\/\/cn-acs\.m\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch\/1\.0 url jsonjq-response-body 'del(.data.data.data.mainSearch, .data.data.data.operationList)'
-^https:\/\/e2e-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch\/1\.0 url jsonjq-response-body 'del(.data.data.data.mainSearch, .data.data.data.operationList)'
-
-# 底部导航布局：保留“首页”(2240) 和“我的”(2249)，移除中间三个 Tab。
-^https:\/\/cn-acs\.m\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch\/1\.0.*pageId%22%3A1300 url jsonjq-response-body '.data.data |= with_entries(select(.key == "2240" or .key == "2249"))'
-^https:\/\/e2e-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch\/1\.0.*pageId%22%3A1300 url jsonjq-response-body '.data.data |= with_entries(select(.key == "2240" or .key == "2249"))'
+# 使用历史版本的组件 ID 删除方式，不依赖 pageId 参数的编码形式。
+# 2242=发现、2247=寄件券、2248=消息；operationList 为首页快捷入口，mainSearch 为搜索栏。
+^https:\/\/cn-acs\.m\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch url jsonjq-response-body 'del(.data.data.data.mainSearch, .data.data.data.operationList, .data.data["2242"], .data.data["2247"], .data.data["2248"])'
+^https:\/\/e2e-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch url jsonjq-response-body 'del(.data.data.data.mainSearch, .data.data.data.operationList, .data.data["2242"], .data.data["2247"], .data.data["2248"])'
 
 # 首页快捷服务、营销入口和“更多”由 NetFlow 广告位接口下发；拦截后包裹列表接口仍正常请求
 ^https:\/\/cn-acs\.m\.cainiao\.com\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads\..* url reject-dict
